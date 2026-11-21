@@ -18,6 +18,8 @@ Arranca con `npm run dev` y abre http://localhost:5173. Si aún no tienes las cl
 Además del navegador necesitas una cuenta en [Google Flow](https://labs.google/fx/tools/flow): ahí se generan los clips.
 
 ---
+<img width="1352" height="768" alt="{B49B8B2B-9588-4E27-8B10-CD791B2963DB}" src="https://github.com/user-attachments/assets/7e85e480-fa76-485a-a836-eab408adb7f1" />
+
 
 ## Paso 1. Encontrar qué está explotando
 
