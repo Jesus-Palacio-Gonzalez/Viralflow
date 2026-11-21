@@ -1,3 +1,5 @@
+<img width="324" height="87" alt="{25A2C00C-E915-4E9E-9C59-F4218FB227C2}" src="https://github.com/user-attachments/assets/6ae30baa-efbc-4ea6-a7c9-f75a630d4cd2" />
+
 # Guía de uso de ViralFlow
 
 De «¿qué está funcionando en YouTube?» a un mp4 listo para subir, en cinco pasos. Esta guía es para usar la herramienta; la instalación y los detalles técnicos están en el [README](README.md).
