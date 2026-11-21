@@ -1,118 +1,126 @@
-# ViralFlow
+# Guía de uso de ViralFlow
 
-Busca videos virales en YouTube, detecta qué nichos están calientes y organiza un proyecto de trabajo por carpetas para replicar el formato con Google Flow.
+De «¿qué está funcionando en YouTube?» a un mp4 listo para subir, en cinco pasos. Esta guía es para usar la herramienta; la instalación y los detalles técnicos están en el [README](README.md).
 
-**Estado: Fases 1, 2 y 3.** Buscador con puntaje viral y ranking de nichos → análisis del video elegido centrado en su **gancho** y su perfil de estilo → guion con un prompt por escena para Google Flow → subes los clips que generes en Flow y la app los edita (voz en off, subtítulos, música) y exporta **un mp4 por plataforma**.
+## Antes de empezar
 
-## Arrancar
+Necesitas dos claves gratuitas en el archivo `.env`:
 
-```bash
-npm install
-cp .env.example .env      # y pega YOUTUBE_API_KEY y GEMINI_API_KEY
-npm run dev               # API en :3001 y panel en http://localhost:5173
-```
-
-Sin API key puedes probar el panel: botón **Cargar datos de demo** (datos sintéticos, marcados como «Demo» y fáciles de borrar).
-
-Para producción: `npm run build && npm start` sirve la API y el panel juntos en el puerto 3001.
-
-## Conseguir la API key de YouTube
-
-1. En [Google Cloud Console](https://console.cloud.google.com/) crea (o elige) un proyecto.
-2. **APIs y servicios → Biblioteca →** busca **YouTube Data API v3** y pulsa **Habilitar**.
-3. **APIs y servicios → Credenciales → Crear credenciales → Clave de API.**
-4. Pégala en `.env` como `YOUTUBE_API_KEY`. Si le pones restricciones, que no sean de *referrer* ni de IP del navegador: la clave se usa desde el servidor.
-
-La cuota gratuita es de **10.000 unidades al día** (se reinicia a medianoche, hora del Pacífico). El panel muestra lo gastado y estima el costo antes de cada escaneo.
-
-| Operación | Costo |
-|---|---|
-| Buscar por nicho o palabra clave (`search.list`) | 100 por página de 50 resultados |
-| Detalles de videos y suscriptores de canales | 1 por llamada de hasta 50 |
-| Tendencias por categoría (`mostPopular`) | 1 por página |
-
-Un escaneo de 6 nichos con 1 página cuesta unas 612 unidades. **Tendencias** es casi gratis: úsalo a diario y reserva las búsquedas por nicho.
-
-## Cómo se calcula el puntaje viral (0–100)
-
-| Señal | Peso | Qué mide |
+| Clave | Para qué | Dónde se saca |
 |---|---|---|
-| Velocidad | 40 % | Vistas por hora. Si el video se escaneó más de una vez, usa el crecimiento real entre escaneos; si no, vistas ÷ horas desde que se publicó |
-| Frente a su canal | 30 % | Vistas ÷ suscriptores. Un video que supera varias veces a su canal es replicable aunque el canal sea pequeño |
-| Interacción | 15 % | (me gusta + comentarios) ÷ vistas |
-| Alcance | 15 % | Vistas totales, en escala logarítmica |
+| `YOUTUBE_API_KEY` | Buscar videos y medir su rendimiento | Google Cloud Console → YouTube Data API v3 → Credenciales |
+| `GEMINI_API_KEY` | Analizar el video, escribir el guion y generar la voz | [aistudio.google.com](https://aistudio.google.com) → Get API key |
 
-Si falta una señal (suscriptores ocultos, me gusta ocultos) su peso se reparte entre las demás en vez de penalizar al video. Cada tarjeta tiene un botón **Cómo se calculó** con el desglose.
+Arranca con `npm run dev` y abre http://localhost:5173. Si aún no tienes las claves, pulsa **Cargar datos de demo** para recorrer la herramienta con videos de ejemplo (aparecen marcados como «Demo»; los borras con **Eliminar datos de demo**).
 
-> **Para medir bien «las primeras horas»:** YouTube no entrega el historial de vistas de un video, así que la app lo construye. Cada escaneo guarda un snapshot; con dos o más escaneos separados por horas, el crecimiento deja de ser una estimación. Escanea con la opción **Los más recientes** un par de veces al día.
+Además del navegador necesitas una cuenta en [Google Flow](https://labs.google/fx/tools/flow): ahí se generan los clips.
 
-## Ranking de nichos
+---
 
-`calor = 50 % promedio de los 5 mejores videos + 25 % promedio general + 25 % oportunidad`
+## Paso 1. Encontrar qué está explotando
 
-La *oportunidad* es el porcentaje de videos de canales con menos de 100.000 suscriptores que superaron al menos 3 veces su tamaño y pasaron de 10.000 vistas. Un nicho caliente con mucha oportunidad es el más fácil de replicar. Los nichos con pocos videos o pocos canales se marcan como *pocos datos*.
+La app tiene tres pestañas: **Nichos**, **Videos** y **Proyectos**.
 
-El panel trae 20 nichos de partida (consultas en español); puedes añadir más con `POST /api/niches`.
+1. Pulsa **Escanear YouTube** y elige qué escanear:
+   - **Tendencias**: casi no gasta cuota. Úsalo a diario.
+   - **Por nicho o palabra clave**: más preciso, pero cada búsqueda cuesta 100 unidades de las 10.000 diarias. El diálogo te muestra el costo estimado antes de ejecutar.
+   - **Los más recientes**: útil para medir las primeras horas de un video. Repítelo un par de veces al día: con dos escaneos separados por horas, la velocidad pasa de estimada a medida.
+2. En **Nichos** verás un ranking por «calor». Un nicho caliente con mucha oportunidad (canales pequeños que explotaron) es el más fácil de replicar. Pulsa **Ver videos** para entrar a uno.
+3. En **Videos** filtra por nicho, formato (cortos o largos), fecha y puntaje mínimo, y ordena por puntaje viral.
+4. Cada tarjeta tiene un puntaje de 0 a 100. **Cómo se calculó** muestra el desglose: velocidad, rendimiento frente a su canal, interacción y alcance. Busca videos con puntaje alto **y** canal pequeño: demuestran que el formato funciona sin depender de una audiencia grande.
 
-## Flujo de trabajo
+## Paso 2. Crear el proyecto
 
-1. **Videos / Nichos:** escanea YouTube y elige un video viral.
-2. **Proyecto → Análisis:** Gemini ve el video y describe el gancho (qué se ve, qué se dice, qué rompe el scroll, plantilla reutilizable) y el perfil de estilo (cámara, color, cortes, subtítulos, voz, música).
-3. **Guion y prompts:** aplica la mecánica del gancho a tu tema, con 3 ganchos alternativos intercambiables, y un prompt por escena para Flow.
-4. **Clips y video final:** pega los prompts en [Google Flow](https://labs.google/fx/tools/flow), descarga los clips y arrástralos a su escena. Elige voz, subtítulos (preseleccionados según el video de referencia), música y formatos, y pulsa **Generar video**.
+En la tarjeta del video que quieres copiar, pulsa **Crear proyecto**:
 
-El resultado queda en `07-exportados/<formato>/` y se descarga desde la app.
+- Ponle nombre (se usa para las carpetas y el archivo final).
+- Marca las **plataformas de destino**: TikTok, Instagram Reels, YouTube Shorts, Facebook Reels, Instagram Feed (4:5) o YouTube horizontal. Cada una genera su propio mp4 con el tamaño y las zonas seguras de esa app.
 
-### Cómo edita
-- FFmpeg viene en `ffmpeg-static` (o usa el del sistema, o `FFMPEG_PATH`). Cada escena se recorta al formato, se mezcla su voz con el sonido ambiente del clip y se queman los subtítulos; después se unen y, si hay música, se mezcla a bajo volumen.
-- Voz: Gemini TTS (`GEMINI_TTS_MODEL`). Se guarda por escena y se reutiliza si no cambió el texto ni la voz; con límite de peticiones espera y reintenta.
-- Duración: manda la voz; si el clip es más corto se congela el último fotograma (máx. 2 s) y, si no alcanza, se acelera la voz hasta 1,25×.
-- Los subtítulos se reparten **en proporción al largo del texto** dentro de cada escena, no palabra por palabra; el desfase es de décimas de segundo.
-- Solo se genera un video a la vez. Límites de subida: clips 600 MB, música 80 MB.
-- La música no se incluye: sube una pista con licencia.
+Ábrelo desde **Proyectos → Abrir proyecto**. Arriba verás la etapa actual; todo lo que se genere se guarda en la carpeta del proyecto (`workspace/<proyecto>/`).
+
+## Paso 3. Analizar el video: el gancho y el estilo
+
+En **Análisis del video de referencia** elige cómo analizar:
+
+- **Que Gemini vea el video (recomendado):** detecta ritmo, planos, voz y transcripción. Solo funciona con videos públicos de YouTube.
+- **Solo título y descripción:** más rápido, pero deduce el estilo sin verlo.
+
+Pulsa **Analizar video**. El resultado tiene:
+
+- **La fórmula para replicar:** el patrón del video en una frase.
+- **El gancho:** lo más importante. Qué se ve y se dice en los primeros segundos, qué rompe el scroll, por qué el espectador no desliza y una **plantilla reutilizable** con huecos para tu tema.
+- **Estructura:** línea de tiempo con las partes del video.
+- **Perfil de estilo:** cámara, color, luz, cortes, subtítulos, voz y música. Es lo que se copiará.
+
+Léelo antes de seguir. Si el gancho no te convence, vuelve a elegir otro video: es más barato que arreglar un mal punto de partida.
+
+## Paso 4. Guion y prompts para Flow
+
+1. Escribe **tu tema** (por ejemplo: «cómo retomar el gimnasio después de vacaciones»). La app aplica la mecánica del gancho original a tu tema, sin copiar sus palabras.
+2. Elige idioma, duración total, tono y formato. Pulsa **Generar guion y prompts**.
+3. Revisa el guion. Cada escena tiene voz en off, texto en pantalla, duración y un **prompt visual** para Flow.
+   - Edita lo que quieras; los prompts se actualizan.
+   - **Ganchos alternativos:** hay 3 variantes de la escena 1. **Usar este gancho** reemplaza la escena actual.
+   - El contador avisa si la voz en off es demasiado larga para la duración de la escena.
+4. Copia el prompt de cada escena con su botón **Copiar**. También quedan guardados como archivos en `03-prompts-flow/`.
+
+## Paso 5. Generar los clips en Flow
+
+Este paso es manual (Flow no tiene API gratuita):
+
+1. Abre [Google Flow](https://labs.google/fx/tools/flow).
+2. Pega el prompt de la escena 1, genera, y descarga el clip que más te guste. Repite por cada escena.
+3. Cada clip debe durar entre 2 y 8 s y salir **sin voz, sin música y sin texto** (los prompts ya lo piden): eso lo pone la app después.
+4. Si Flow te da un clip vertical y tu formato es horizontal (o al revés), la app recorta el centro; mejor genera con la orientación correcta.
+
+## Paso 6. Subir los clips y generar el video
+
+En **Clips y video final**:
+
+1. **Sube cada clip** arrastrándolo a su escena (o haciendo clic). Verás miniatura, duración y resolución. Los avisos amarillos señalan clips cortos o con orientación distinta. Para cambiar uno, **Reemplazar**; para quitarlo, **Quitar**.
+2. Configura la edición:
+   - **Voz en off:** elige una voz de Gemini y pulsa **Probar voz** para oírla. La velocidad ajusta el ritmo. Con «Voz de Gemini» desactivada, el video queda sin narración.
+   - **Subtítulos:** estilo (blanco con borde, amarillo o con caja), posición y mayúsculas. Vienen preseleccionados según los subtítulos del video de referencia.
+   - **Sonido:** conserva el ambiente de los clips a volumen bajo y, si quieres, suma **música de fondo** subiendo tu propia pista (mp3, wav o m4a; usa música con licencia para publicar).
+   - **Formatos de salida:** marca las plataformas que necesitas.
+3. Cuando estén todos los clips, **Generar video**. Verás el avance por escena; puedes **Cancelar** o salir de la pantalla, porque el trabajo sigue en el servidor. Solo se genera un video a la vez.
+4. Al terminar aparecen los videos para verlos y **Descargar mp4**. También quedan en `07-exportados/<formato>/`.
+
+Si algo no te gusta, cambia las opciones y pulsa **Generar de nuevo**. La voz de cada escena se reutiliza mientras no cambies su texto ni la voz elegida, así que repetir no gasta cuota de Gemini.
+
+---
 
 ## Carpetas de cada proyecto
 
-Se crean dentro de `workspace/<nombre-del-proyecto>/`:
-
 ```
-00-referencia/        video.json con los datos del video viral
-01-analisis/
-02-guion/
-03-prompts-flow/
-04-clips/             los clips que descargues de Flow
-05-voz-y-musica/
-06-subtitulos/
-07-exportados/
-  tiktok/format.json  una carpeta por plataforma elegida, con resolución,
-  youtube-shorts/     relación de aspecto y duración recomendada
-project.json · README.md
+workspace/<proyecto>/
+├── 00-referencia/       datos del video original
+├── 01-analisis/         análisis (json y resumen legible)
+├── 02-guion/            guion (json y legible)
+├── 03-prompts-flow/     un .txt por escena y prompts.md
+├── 04-clips/            los clips que subiste
+├── 05-voz-y-musica/     voz de cada escena y tu pista de música
+├── 06-subtitulos/
+└── 07-exportados/       un mp4 por plataforma
 ```
 
-Formatos incluidos: TikTok, Instagram Reels, YouTube Shorts, Facebook Reels, Instagram Feed (4:5) y YouTube horizontal. Son una guía de partida: las plataformas cambian sus límites, revísalos antes de publicar.
+## Problemas frecuentes
 
-## Estructura del código
+| Qué ves | Qué hacer |
+|---|---|
+| «Falta GEMINI_API_KEY» | Agrégala a `.env` y reinicia el servidor. Sin ella puedes generar el video **sin voz en off**. |
+| «Gemini limita las peticiones» | Es el límite del plan gratuito. La app espera y reintenta sola; si persiste, espera un minuto. |
+| «Ya hay una generación en curso» | Espera a que termine la anterior de ese proyecto. |
+| «Ya se está generando un video» | Solo se edita un video a la vez; espera o cancela el que está en curso. |
+| Error al subir un clip | Debe ser un video real (.mp4, .mov, .webm, .mkv) de menos de 600 MB. |
+| La voz falla con error de modelo | El nombre del modelo de voz puede haber cambiado: ajusta `GEMINI_TTS_MODEL` en `.env`. |
+| Se acabó la cuota de YouTube | Se reinicia a medianoche, hora del Pacífico. Mientras tanto, trabaja con los videos ya guardados. |
+| No encuentro FFmpeg | Viene incluido (`ffmpeg-static`); si falla en tu sistema, instala FFmpeg y pon su ruta en `FFMPEG_PATH`. |
 
-```
-server/src/
-  youtube.ts    cliente de la API (errores traducidos, cuenta de cuota)
-  scoring.ts    puntaje viral          analytics.ts  nichos y términos en alza
-  scanner.ts    escaneos y estimación de costo
-  projects.ts   carpetas y etapas      formats.ts    presets por plataforma
-  gemini.ts     texto, video y voz     content.ts    análisis y guion
-  clips.ts      subidas y música       render.ts     edición con FFmpeg
-  captions.ts   subtítulos ASS         voice.ts      voz en off
-  demo.ts       datos sintéticos       *.test.ts     41 pruebas
-client/src/     panel en React + Tailwind
-```
+## Buenas prácticas
 
-`npm test` corre las pruebas (puntaje, ranking y un escaneo completo con la API de YouTube simulada, sin gastar cuota). `npm run typecheck` revisa ambos paquetes.
+- **Copia la mecánica, no el contenido.** La app reescribe el gancho para tu tema; no subas clips ni textos calcados del video original.
+- **Gasta cuota con cabeza:** tendencias a diario, búsquedas por nicho solo cuando estés decidiendo.
+- **Prueba la voz** antes de generar: es lo que más cambia el resultado final.
+- **Revisa el video antes de publicar**, sobre todo los subtítulos: se reparten según el largo del texto de cada escena y pueden desfasarse unas décimas de segundo.
 
-## Qué falta verificar contigo
-
-- El nombre del modelo de voz (`GEMINI_TTS_MODEL`) y si tu clave gratuita lo permite: cámbialo en `.env` si Google lo renombra.
-- Google Flow no tiene API gratuita, por eso la generación de clips es manual. El editor no depende del origen de los clips, así que luego se puede añadir otro proveedor.
-
-## Uso responsable
-
-El sistema sirve para estudiar qué formatos funcionan y recrearlos con contenido propio. Adapta el gancho, el ritmo y la estructura; no copies tal cual el video de otra persona.
