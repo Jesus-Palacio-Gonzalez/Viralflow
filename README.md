@@ -126,7 +126,7 @@ workspace/<proyecto>/
 | Se acabó la cuota de YouTube | Se reinicia a medianoche, hora del Pacífico. Mientras tanto, trabaja con los videos ya guardados. |
 | No encuentro FFmpeg | Viene incluido (`ffmpeg-static`); si falla en tu sistema, instala FFmpeg y pon su ruta en `FFMPEG_PATH`. |
 
-## Buenas prácticas
+## Buenas prácticas 
 
 - **Copia la mecánica, no el contenido.** La app reescribe el gancho para tu tema; no subas clips ni textos calcados del video original.
 - **Gasta cuota con cabeza:** tendencias a diario, búsquedas por nicho solo cuando estés decidiendo.
@@ -135,7 +135,7 @@ workspace/<proyecto>/
 
 
 
-⭐ ¿Te sirvió?
+⭐ ## ¿Te sirvió?
 
 ViralFlow es gratis y lo construyo en mi tiempo libre. Si te ahorró horas de buscar tendencias, escribir guiones o editar videos, regálame una **estrella** al repositorio: es la forma más rápida de ayudarme a que más gente lo encuentre. Y si quieres ver qué más estoy construyendo (SaaS, automatización y herramientas para creadores), **sígueme en [GitHub](https://github.com/TU_USUARIO)**. Cada mejora que publique te llegará primero a ti. ¡Gracias por usarlo! 🚀
 
