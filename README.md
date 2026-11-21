@@ -133,3 +133,11 @@ workspace/<proyecto>/
 - **Prueba la voz** antes de generar: es lo que más cambia el resultado final.
 - **Revisa el video antes de publicar**, sobre todo los subtítulos: se reparten según el largo del texto de cada escena y pueden desfasarse unas décimas de segundo.
 
+
+
+⭐ ¿Te sirvió?
+
+ViralFlow es gratis y lo construyo en mi tiempo libre. Si te ahorró horas de buscar tendencias, escribir guiones o editar videos, regálame una **estrella** al repositorio: es la forma más rápida de ayudarme a que más gente lo encuentre. Y si quieres ver qué más estoy construyendo (SaaS, automatización y herramientas para creadores), **sígueme en [GitHub](https://github.com/TU_USUARIO)**. Cada mejora que publique te llegará primero a ti. ¡Gracias por usarlo! 🚀
+
+— **Jesus Palacio** · [PalacioTech](https://github.com/Jesus-Palacio-Gonzalez)
+
