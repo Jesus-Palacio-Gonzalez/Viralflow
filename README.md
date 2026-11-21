@@ -34,6 +34,7 @@ La app tiene tres pestañas: **Nichos**, **Videos** y **Proyectos**.
 4. Cada tarjeta tiene un puntaje de 0 a 100. **Cómo se calculó** muestra el desglose: velocidad, rendimiento frente a su canal, interacción y alcance. Busca videos con puntaje alto **y** canal pequeño: demuestran que el formato funciona sin depender de una audiencia grande.
 
 ## Paso 2. Crear el proyecto
+<img width="385" height="548" alt="{BC6AA16A-ADDF-4E99-A8D0-4DC424E64197}" src="https://github.com/user-attachments/assets/0b03b5af-d425-44bd-a525-b149e0e58573" />
 
 En la tarjeta del video que quieres copiar, pulsa **Crear proyecto**:
 
@@ -43,6 +44,7 @@ En la tarjeta del video que quieres copiar, pulsa **Crear proyecto**:
 Ábrelo desde **Proyectos → Abrir proyecto**. Arriba verás la etapa actual; todo lo que se genere se guarda en la carpeta del proyecto (`workspace/<proyecto>/`).
 
 ## Paso 3. Analizar el video: el gancho y el estilo
+<img width="688" height="586" alt="{05785BE7-8B0E-40F3-BA0F-0A37D7455E2D}" src="https://github.com/user-attachments/assets/7ec3a33c-6d91-4a24-8d1b-338b6a0c5ac5" />
 
 En **Análisis del video de referencia** elige cómo analizar:
 
@@ -59,6 +61,7 @@ Pulsa **Analizar video**. El resultado tiene:
 Léelo antes de seguir. Si el gancho no te convence, vuelve a elegir otro video: es más barato que arreglar un mal punto de partida.
 
 ## Paso 4. Guion y prompts para Flow
+<img width="1225" height="583" alt="{2F1C809B-ADFD-42B3-B0F6-DF8FE00E02ED}" src="https://github.com/user-attachments/assets/68e72dde-2c4d-47eb-9dc3-00e7a0fb3c11" />
 
 1. Escribe **tu tema** (por ejemplo: «cómo retomar el gimnasio después de vacaciones»). La app aplica la mecánica del gancho original a tu tema, sin copiar sus palabras.
 2. Elige idioma, duración total, tono y formato. Pulsa **Generar guion y prompts**.
@@ -78,6 +81,8 @@ Este paso es manual (Flow no tiene API gratuita):
 4. Si Flow te da un clip vertical y tu formato es horizontal (o al revés), la app recorta el centro; mejor genera con la orientación correcta.
 
 ## Paso 6. Subir los clips y generar el video
+<img width="969" height="498" alt="{18C24DCF-A91A-4C4C-9AFD-F5161993E58A}" src="https://github.com/user-attachments/assets/ccc052e6-653b-471b-a4ce-465003bd2928" />
+<img width="976" height="403" alt="{02F7EEC4-464F-420D-BA66-337D3DBCA8FF}" src="https://github.com/user-attachments/assets/63e3a30d-4bf0-4620-8e08-f9fd15fbb2af" />
 
 En **Clips y video final**:
 
