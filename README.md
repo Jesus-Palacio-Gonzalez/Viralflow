@@ -22,6 +22,7 @@ Además del navegador necesitas una cuenta en [Google Flow](https://labs.google/
 
 
 ## Paso 1. Encontrar qué está explotando
+<img width="552" height="577" alt="{BB7366DB-1CC9-4AC1-A926-8C9D8A4FAAC2}" src="https://github.com/user-attachments/assets/e3d622e5-a4f3-43c9-9caa-9496aff2473a" />
 
 La app tiene tres pestañas: **Nichos**, **Videos** y **Proyectos**.
 
